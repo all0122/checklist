@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>나는 지금 갱년기일까? — 자가 체크리스트 | 안착 by 말리™</title>
+  <meta name="description" content="갱년기 증상 자가 체크리스트. 최근 3~6개월 이내 달라진 점을 체크하고 나의 상태를 확인해 보세요.">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #ffffff;
+      --bg2: #f7f6f3;
+      --bg3: #f0efe9;
+      --text: #1a1a18;
+      --text2: #6b6b66;
+      --text3: #9e9d98;
+      --border: rgba(0,0,0,0.1);
+      --border2: rgba(0,0,0,0.18);
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --accent: #185FA5;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #1c1c1a;
+        --bg2: #252523;
+        --bg3: #2e2e2b;
+        --text: #e8e6de;
+        --text2: #a09e96;
+        --text3: #6b6966;
+        --border: rgba(255,255,255,0.1);
+        --border2: rgba(255,255,255,0.18);
+      }
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Apple SD Gothic Neo",
+                   "Noto Sans KR", sans-serif;
+      background: var(--bg3);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 1.5rem 1rem 3rem;
+    }
+
+    .card {
+      max-width: 560px;
+      margin: 0 auto;
+      background: var(--bg);
+      border-radius: var(--radius-lg);
+      border: 0.5px solid var(--border);
+      overflow: hidden;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    }
+
+    /* 상단 고정 바 */
+    .score-bar {
+      position: sticky;
+      top: 0;
+      background: var(--bg);
+      border-bottom: 0.5px solid var(--border);
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      z-index: 10;
+    }
+    .score-num {
+      font-size: 20px;
+      font-weight: 500;
+      color: var(--text);
+      min-width: 54px;
+    }
+    .score-num span { font-size: 13px; color: var(--text3); }
+    .score-label { font-size: 11px; color: var(--text2); }
+    .progress-track {
+      flex: 1;
+      height: 6px;
+      background: var(--border);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      border-radius: 3px;
+      transition: width .3s ease, background .3s ease;
+      width: 0%;
+      background: var(--border2);
+    }
+    .stage-text {
+      font-size: 12px;
+      color: var(--text3);
+      min-width: 82px;
+      text-align: right;
+      transition: color .3s;
+    }
+
+    /* 본문 */
+    .wrap { padding: 1.5rem 1.25rem 2rem; }
+
+    .header { text-align: center; margin-bottom: 1.2rem; }
+    .header h1 {
+      font-size: 17px;
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 6px;
+      line-height: 1.5;
+    }
+    .header p { font-size: 12px; color: var(--text2); line-height: 1.6; }
+
+    .notice {
+      background: var(--bg2);
+      border-left: 3px solid var(--border2);
+      border-radius: 0 var(--radius-md) var(--radius-md) 0;
+      padding: 10px 14px;
+      margin-bottom: 1.4rem;
+      font-size: 12px;
+      color: var(--text2);
+      line-height: 1.7;
+    }
+
+    /* 섹션 */
+    .section { margin-bottom: 1.2rem; }
+    .sec-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+      padding-bottom: 6px;
+      border-bottom: 0.5px solid var(--border);
+    }
+    .sec-icon { font-size: 14px; }
+    .sec-title { font-size: 12px; font-weight: 500; color: var(--text2); }
+
+    /* 체크 아이템 */
+    .item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 8px 10px;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: background .12s;
+      margin-bottom: 2px;
+      border: 0.5px solid transparent;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .item:hover { background: var(--bg2); }
+    .item.checked {
+      background: var(--bg2);
+      border-color: var(--border2);
+    }
+    .item input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      margin-top: 2px;
+      cursor: pointer;
+      flex-shrink: 0;
+      accent-color: #185FA5;
+    }
+    .item label {
+      font-size: 13px;
+      color: var(--text);
+      line-height: 1.6;
+      cursor: pointer;
+    }
+    .item.checked label { color: #185FA5; }
+
+    /* 결과 박스 */
+    .result-box {
+      border-radius: var(--radius-lg);
+      padding: 1rem 1.25rem;
+      margin-top: 1.4rem;
+      border: 0.5px solid var(--border2);
+      background: var(--bg2);
+      transition: background .3s, border-color .3s;
+    }
+    .r-title {
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 8px;
+      color: var(--text2);
+      line-height: 1.5;
+      transition: color .3s;
+    }
+    .r-desc {
+      font-size: 12px;
+      color: var(--text2);
+      line-height: 1.75;
+    }
+    .r-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 10px;
+    }
+    .r-tag {
+      font-size: 11px;
+      font-weight: 500;
+      padding: 4px 10px;
+      border-radius: 20px;
+    }
+
+    /* 푸터 */
+    .divider {
+      border: none;
+      border-top: 0.5px solid var(--border);
+      margin: 1.4rem 0 1rem;
+    }
+    .footer {
+      text-align: center;
+      font-size: 11px;
+      color: var(--text3);
+      line-height: 2;
+    }
+    .copyright {
+      text-align: center;
+      font-size: 11px;
+      color: var(--text3);
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 0.5px solid var(--border);
+      line-height: 1.8;
+    }
+  </style>
+</head>
+<body>
+
+<div class="card">
+
+  <!-- 상단 고정 점수 바 -->
+  <div class="score-bar">
+    <div>
+      <div class="score-num"><span id="cnt">0</span><span>/34</span></div>
+      <div class="score-label">체크 항목</div>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="bar"></div>
+    </div>
+    <div class="stage-text" id="stage-text">체크해 보세요</div>
+  </div>
+
+  <div class="wrap">
+
+    <div class="header">
+      <h1>나는 지금 갱년기일까? — 자가 체크리스트</h1>
+      <p>최근 3~6개월 이내, 이전과 달라진 점을 체크하세요<br>정도와 상관없이 "있다"면 체크</p>
+    </div>
+
+    <div class="notice">
+      이 체크리스트는 의학적 진단 도구가 아닙니다.<br>
+      자신의 몸 변화를 인식하는 <strong>자기 이해 도구</strong>입니다.
+    </div>
+
+    <!-- 1. 생리 패턴 -->
+    <div class="section">
+      <div class="sec-header">
+        <span class="sec-icon">🌸</span>
+        <span class="sec-title">생리 패턴 변화</span>
+      </div>
+      <div class="item" onclick="toggle(this)"><input type="checkbox"><label>생리 주기가 예전보다 2~3일 짧아졌다 (예: 30일 → 26~27일)</label></div>
+      <div class="item" onclick="toggle(this)"><input type="checkbox"><label>배란 즈음 가슴 통증이나 부기가 이전보다 심해졌다</label></div>
+      <div class="item" onclick="toggle(this)"><input type="checkbox"><label>생리 전 PMS 증상(짜증·부종·식욕증가)이 예전보다 심해졌다</label></div>
+      <div class="item" onclick="toggle(this)"><input type="checkbox"><label>생리 주기 차이가 7일 이상 벌어지는 달이 생겼다</label></div>
+      <div class="item" onclick="toggle(this)"><input type="checkbox"><label>생리량이 눈에 띄게 줄거나 갑자기 많아진 적 있다</label></div>
+      <div class="item" onclick="toggle(this)"><input type="checkbox"><label>생리가 2~3개월 불규칙하거나 건너뛴 적 있다</label></div>
+      <div class="item" onclick="toggle(this)"><input type="checkbox"><label>마지막 생리로부터 6개월 이상 지났다</label></div>
+    </div>
+
+    <!-- 2. 열감·발한 -->
+    <div class="section">
+      <div class="sec-header">
+        <span class="sec-icon">🌡</span>
+        <span class="sec-title">열감 · 발한</span>
+      </div>
+      <div class="item" onclick="toggle(this)"><input type="checkbox"><label>가끔 이유 없이 얼굴이 붉어지거나 열이 확 오르는 느낌이 든다</label></div>
+      <div class="item" onclick="toggle(this)"><input type="checkbox"><label>자다가 이불을 걷어차거나, 밤에 더위를 갑자기 타게 됐다</label></div>
+      <div class="item" onclick="toggle(this)"><input type="checkbox"><label>안면홍조가 하루에 한두 번 이상 반복된다</label></div>
+      <div class="item" onclick="toggle(this)"><input type="checkbox"><label>밤에 땀에 젖어 잠에서 깬 적이 있다</label></div>
+      <div class="item" onclick="toggle(this)"><input type="checkbox"><label>홍조가 하루 5회 이상, 또는 수시로 나타나 일상이 불편하다</label></div>
+    </div>
+
+    <!-- 3. 수면·에너지 -->
+    <div class="section">
+      <div class="sec-header">
+        <span class="sec-icon">💤</span>
+        <span class="sec-title">수면 · 에너지</span>
+      </div>
+      <div class="item" onclick="toggle(this)"><input type="checkbox"><label>예전보다 잠이 얕아진 것 같고, 작은 소리에도 깨는 편이 됐다</label></div>
+      <div class="item" onclick="toggle(this)"><input type="checkbox"><label>오후에 갑자기 피곤하고 무기력한 시간이 생겼다</label></div>
+      <div class="item" onclick="toggle(this)"><input type="checkbox"><label>잠들기 어렵거나 새벽에 자주 깨서 다시 잠들기 힘들다</label></div>
+      <div class="item" onclick="toggle(this)"><input type="checkbox"><label>충분히 잔 것 같아도 피로가 풀리지 않는다</label></div>
+    </div>
+
+    <!-- 4. 정서·심리 -->
+    <div class="section">
+      <div class="sec-header">
+        <span class="sec-icon">💛</span>
+        <span class="sec-title">정서 · 심리</span>
+      </div>
+      <div class="item" onclick="toggle(this)"><input type="checkbox"><label>생리 전이 아닌데도 감정 기복이 생기거나 예민해지는 날이 늘었다</label></div>
+      <div class="item" onclick="toggle(this)"><input type="checkbox"><label>예전엔 그냥 넘겼을 일에 갑자기 눈물이 날 것 같다</label></div>
+      <div class="item" onclick="toggle(this)"><input type="checkbox"><label>이유 없이 불안하거나 초조한 느낌이 자주 든다</label></div>
+      <div class="item" onclick="toggle(this)"><input type="checkbox"><label>의욕이 뚝 떨어지거나 무기력한 시기가 반복된다</label></div>
+      <div class="item" onclick="toggle(this)"><input type="checkbox"><label>우울한 기분이 2주 이상 지속된 적 있다</label></div>
+    </div>
+
+    <!-- 5. 인지·집중력 -->
+    <div class="section">
+      <div class="sec-header">
+        <span class="sec-icon">🧠</span>
+        <span class="sec-title">인지 · 집중력</span>
+      </div>
+      <div class="item" onclick="toggle(this)"><input type="checkbox"><label>말하다가 단어가 순간 생각 안 나는 일이 예전보다 잦아졌다</label></div>
+      <div class="item" onclick="toggle(this)"><input type="checkbox"><label>읽은 내용이 금방 머릿속에서 사라지는 느낌이 든다</label></div>
+      <div class="item" onclick="toggle(this)"><input type="checkbox"><label>집중이 어렵고, 하던 일의 실수가 전보다 늘었다</label></div>
+      <div class="item" onclick="toggle(this)"><input type="checkbox"><label>약속이나 방금 한 일을 깜빡하는 일이 잦아졌다</label></div>
+    </div>
+
+    <!-- 6. 신체·피부·체형 -->
+    <div class="section">
+      <div class="sec-header">
+        <span class="sec-icon">🦴</span>
+        <span class="sec-title">신체 · 피부 · 체형</span>
+      </div>
+      <div class="item" onclick="toggle(this)"><input type="checkbox"><label>식단이나 운동량이 같은데 복부에 살이 붙거나 체중이 늘었다</label></div>
+      <div class="item" onclick="toggle(this)"><input type="checkbox"><label>피부가 예전보다 건조해지고 탄력이 줄어드는 것 같다</label></div>
+      <div class="item" onclick="toggle(this)"><input type="checkbox"><label>머리카락이 가늘어지거나 빠지는 양이 눈에 띄게 늘었다</label></div>
+      <div class="item" onclick="toggle(this)"><input type="checkbox"><label>관절이 뻣뻣하거나 근육통이 이전보다 잦아졌다</label></div>
+    </div>
+
+    <!-- 7. 비뇨생식기 -->
+    <div class="section">
+      <div class="sec-header">
+        <span class="sec-icon">💧</span>
+        <span class="sec-title">비뇨생식기</span>
+      </div>
+      <div class="item" onclick="toggle(this)"><input type="checkbox"><label>평소에도 외음부나 질 주변이 건조하거나 가렵고 불편한 느낌이 든다</label></div>
+      <div class="item" onclick="toggle(this)"><input type="checkbox"><label>성관계 시 건조하거나 통증·불편감이 생겼다</label></div>
+      <div class="item" onclick="toggle(this)"><input type="checkbox"><label>성욕이 예전보다 줄었거나 성관계에 대한 흥미가 전과 다르다</label></div>
+      <div class="item" onclick="toggle(this)"><input type="checkbox"><label>소변이 급하거나, 기침·재채기 시 소변이 새는 경우가 생겼다</label></div>
+    </div>
+
+    <!-- 결과 박스 -->
+    <div class="result-box" id="result-box">
+      <div class="r-title" id="r-title">체크를 완료하면 결과가 표시됩니다</div>
+      <div class="r-desc" id="r-desc">위 항목들에서 해당되는 것을 체크해 주세요.</div>
+      <div class="r-tags" id="r-tags"></div>
+    </div>
+
+    <hr class="divider">
+
+    <div class="footer">
+      이 자료는 자기 인식을 위한 참고 도구입니다<br>
+      갱년기 웰라이프 코칭 자료 · 안착 by 말리™<br>
+      증상이 의심될 경우 산부인과 혈액검사(FSH, E2)로 확인하세요
+    </div>
+    <div class="copyright">
+      © 말리언니 · 본 체크리스트의 저작권은 말리언니에게 있습니다.<br>
+      무단 복제 · 배포 · 재가공을 금합니다.
+    </div>
+
+  </div><!-- .wrap -->
+</div><!-- .card -->
+
+<script>
+  const TOTAL = 34;
+  const results = [
+    {
+      min:0, max:2,
+      title:"현재는 뚜렷한 갱년기 신호가 적어요",
+      desc:"지금 당장의 변화는 적지만, 40대 전후라면 몸의 신호에 귀 기울이기 시작할 때입니다. 규칙적인 운동·수면·스트레스 관리로 전환기를 미리 준비하세요.",
+      tags:["예방 관리 단계","생활습관 점검"],
+      col:"#1D9E75", bg:"#E1F5EE"
+    },
+    {
+      min:3, max:6,
+      title:"갱년기 초입 — 미묘한 변화가 시작됐을 수 있어요",
+      desc:"아직 강한 증상은 아니지만 '예전과 조금 다르다'는 신호들이 감지됩니다. 이 시기에 인식하는 것이 가장 좋습니다. 생리 주기 기록을 시작하고, 변화의 패턴을 관찰해 보세요.",
+      tags:["초기 신호 감지","기록 시작 권장"],
+      col:"#185FA5", bg:"#E6F1FB"
+    },
+    {
+      min:7, max:13,
+      title:"갱년기 진행 중일 가능성이 높아요",
+      desc:"여러 영역에서 변화가 함께 나타나고 있습니다. 이것은 이상한 것이 아닙니다. 자연스러운 호르몬 전환의 신호입니다. 산부인과 혈액검사(FSH, E2)로 확인해 보고, 생활습관 전반을 점검하세요.",
+      tags:["전문의 상담 권장","호르몬 검사 고려"],
+      col:"#BA7517", bg:"#FAEEDA"
+    },
+    {
+      min:14, max:TOTAL,
+      title:"갱년기 전환기 한가운데에 있을 가능성이 높아요",
+      desc:"다양한 영역에서 복합적인 변화가 나타나고 있습니다. 혼자 감당하려 하지 마세요. 산부인과 상담과 함께 코칭이나 지지 그룹을 통해 이 전환기를 함께 걸어가는 것을 권장합니다.",
+      tags:["적극적 관리 필요","의료+라이프스타일 병행"],
+      col:"#993C1D", bg:"#FAECE7"
+    }
+  ];
+
+  function toggle(el) {
+    const cb = el.querySelector('input[type="checkbox"]');
+    if (!cb) return;
+    cb.checked = !cb.checked;
+    el.classList.toggle('checked', cb.checked);
+    update();
+  }
+
+  function update() {
+    const all = document.querySelectorAll('.item input[type="checkbox"]');
+    let cnt = 0;
+    all.forEach(cb => { if (cb.checked) cnt++; });
+
+    document.getElementById('cnt').textContent = cnt;
+    const pct = Math.round(cnt / TOTAL * 100);
+    const bar = document.getElementById('bar');
+    bar.style.width = pct + '%';
+
+    const stage = results.find(r => cnt >= r.min && cnt <= r.max) || results[results.length - 1];
+    bar.style.background = stage.col;
+
+    const st = document.getElementById('stage-text');
+    st.textContent = cnt > 0 ? (cnt + '개 체크됨') : '체크해 보세요';
+    st.style.color = cnt > 0 ? stage.col : '';
+
+    const rb = document.getElementById('result-box');
+    rb.style.background = stage.bg;
+    rb.style.borderColor = stage.col + '55';
+
+    const rt = document.getElementById('r-title');
+    rt.textContent = stage.title;
+    rt.style.color = stage.col;
+
+    document.getElementById('r-desc').textContent = stage.desc;
+
+    const tags = document.getElementById('r-tags');
+    tags.innerHTML = cnt > 0
+      ? stage.tags.map(t =>
+          `<span class="r-tag" style="background:${stage.col}22;color:${stage.col}">${t}</span>`
+        ).join('')
+      : '';
+  }
+</script>
+</body>
+</html>
