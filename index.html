@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>나는 지금 갱년기일까? | 안착 by 말리™</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600&family=Noto+Sans+KR:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --cream:#F4F1E8; --cream2:#EDE9DC; --cream3:#E5E0CE;
+  --sage:#6B7F4A; --sage2:#8A9E62; --sage3:#4E5E35;
+  --text:#2C2A22; --text2:#6B6860; --text3:#A09D94;
+  --white:#FDFCF8; --radius:16px; --radius-sm:10px;
+}
+html,body{height:100%;overflow:hidden}
+body{
+  font-family:'Noto Sans KR',sans-serif;
+  background:var(--cream);
+  color:var(--text);
+  display:flex; align-items:center; justify-content:center;
+}
+.app{
+  width:100%; max-width:480px;
+  height:100vh; height:100dvh;
+  position:relative; overflow:hidden;
+  background:var(--cream);
+}
+
+/* ── 페이지 슬라이드 시스템 ── */
+.page{
+  position:absolute; inset:0;
+  display:flex; flex-direction:column;
+  background:var(--cream);
+  will-change:transform,opacity;
+  /* 기본: 숨김 상태 */
+  visibility:hidden;
+  pointer-events:none;
+}
+/* 활성 페이지 */
+.page.active{
+  visibility:visible;
+  pointer-events:auto;
+}
+
+/* 슬라이드 애니메이션 */
+@keyframes slideInRight{
+  from{transform:translateX(60px);opacity:0}
+  to{transform:translateX(0);opacity:1}
+}
+@keyframes slideInLeft{
+  from{transform:translateX(-60px);opacity:0}
+  to{transform:translateX(0);opacity:1}
+}
+@keyframes slideOutLeft{
+  from{transform:translateX(0);opacity:1}
+  to{transform:translateX(-60px);opacity:0}
+}
+@keyframes slideOutRight{
+  from{transform:translateX(0);opacity:1}
+  to{transform:translateX(60px);opacity:0}
+}
+
+.page.anim-in-right  { animation: slideInRight  .3s ease forwards; }
+.page.anim-in-left   { animation: slideInLeft   .3s ease forwards; }
+.page.anim-out-left  { animation: slideOutLeft  .3s ease forwards; visibility:visible; pointer-events:none; }
+.page.anim-out-right { animation: slideOutRight .3s ease forwards; visibility:visible; pointer-events:none; }
+
+/* ── 시작 페이지 ── */
+#page-intro{
+  background:var(--white);
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+  align-items:center;
+  padding:2.5rem 2rem 3rem;
+  text-align:center;
+}
+#page-intro::-webkit-scrollbar{display:none}
+.intro-badge{
+  display:inline-block; background:var(--sage); color:#fff;
+  font-size:11px; font-weight:500; letter-spacing:.08em;
+  padding:5px 14px; border-radius:20px; margin-bottom:1.8rem;
+}
+.intro-title{
+  font-family:'Noto Serif KR',serif;
+  font-size:26px; font-weight:600; color:var(--text);
+  line-height:1.45; margin-bottom:1rem;
+}
+.intro-title span{color:var(--sage)}
+.intro-desc{
+  font-size:14px; color:var(--text2);
+  line-height:1.8; margin-bottom:2rem;
+}
+.intro-notice{
+  background:var(--cream); border-radius:var(--radius-sm);
+  padding:14px 18px; font-size:12px; color:var(--text2);
+  line-height:1.8; margin-bottom:2rem; text-align:left;
+}
+.intro-notice strong{color:var(--sage3);font-weight:500}
+.notice-items{margin-top:8px;display:flex;flex-direction:column;gap:6px}
+.notice-item{display:flex;align-items:flex-start;gap:8px;font-size:12px;color:var(--text2);line-height:1.6}
+.notice-mark{color:var(--sage);font-weight:600;flex-shrink:0;margin-top:1px}
+.intro-sections{
+  display:flex; flex-wrap:wrap; gap:8px;
+  justify-content:center; margin-bottom:2.5rem;
+}
+.intro-sec-tag{
+  background:var(--cream2); border-radius:20px;
+  padding:5px 12px; font-size:12px; color:var(--text2);
+}
+.start-btn{
+  width:100%; background:var(--sage); color:#fff; border:none;
+  border-radius:var(--radius); padding:17px;
+  font-size:16px; font-weight:500; font-family:inherit;
+  cursor:pointer; transition:background .15s,transform .1s;
+  letter-spacing:.02em;
+}
+.start-btn:hover{background:var(--sage3)}
+.start-btn:active{transform:scale(.98)}
+.start-btn:disabled{background:var(--cream3);color:var(--text3);cursor:default}
+.age-section{margin-bottom:1.2rem;width:100%}
+.age-label{font-size:13px;font-weight:500;color:var(--text2);margin-bottom:.7rem;text-align:center}
+.age-btns{display:flex;gap:8px}
+.age-btn{
+  flex:1;padding:11px 6px;
+  background:var(--cream);border:1.5px solid var(--cream3);
+  border-radius:var(--radius-sm);font-size:13px;font-weight:500;
+  color:var(--text2);cursor:pointer;font-family:inherit;
+  transition:all .15s;
+}
+.age-btn:hover{border-color:var(--sage2);color:var(--sage)}
+.age-btn.selected{background:var(--sage);border-color:var(--sage);color:#fff}
+
+.check-header{
+  padding:.8rem 1.2rem .6rem;
+  background:var(--white);
+  border-bottom:1px solid var(--cream2);
+  flex-shrink:0;
+}
+.nav-row{
+  display:flex; align-items:center;
+  justify-content:space-between; margin-bottom:.7rem;
+}
+.back-btn{
+  width:36px; height:36px;
+  display:flex; align-items:center; justify-content:center;
+  background:var(--cream2); border:none; border-radius:50%;
+  cursor:pointer; transition:background .12s;
+  color:var(--text); font-size:18px; font-weight:600; flex-shrink:0;
+  line-height:1;
+}
+.back-btn:hover{background:var(--cream3)}
+.nav-title{
+  font-size:15px; font-weight:500; color:var(--text);
+  text-align:center; flex:1; padding:0 8px;
+}
+.nav-count{
+  font-size:14px; color:var(--sage); font-weight:600;
+  min-width:36px; text-align:right; flex-shrink:0;
+}
+.progress-track{
+  height:6px; background:var(--cream2);
+  border-radius:3px; overflow:hidden;
+}
+.progress-fill{
+  height:100%; background:var(--sage);
+  border-radius:3px; transition:width .4s cubic-bezier(.4,0,.2,1);
+}
+
+/* 섹션 소개 */
+.sec-hero{
+  padding:.8rem 1.2rem .6rem;
+  background:var(--white); flex-shrink:0;
+}
+.sec-icon-wrap{
+  width:36px; height:36px; background:var(--cream);
+  border-radius:10px; display:flex; align-items:center;
+  justify-content:center; font-size:18px; margin-bottom:.4rem;
+}
+.sec-name{
+  font-family:'Noto Serif KR',serif;
+  font-size:18px; font-weight:600; color:var(--text); margin-bottom:2px;
+}
+.sec-guide-box{
+  background:var(--white);
+  border-left:3px solid var(--sage);
+  border-radius:0 var(--radius-sm) var(--radius-sm) 0;
+  padding:10px 14px;
+  margin-bottom:.9rem;
+}
+.sec-period-inline{
+  font-size:13px;color:var(--sage3);font-weight:500;
+  line-height:1.55;margin-bottom:3px;
+}
+.sec-guide-inline{
+  font-size:12px;color:var(--text3);line-height:1.5;
+}
+
+/* 아이템 */
+.items-scroll{
+  flex:1; overflow-y:auto; background:var(--cream);
+  padding:1rem 1.2rem;
+  -webkit-overflow-scrolling:touch;
+}
+.items-scroll::-webkit-scrollbar{display:none}
+.item{
+  display:flex; align-items:flex-start; gap:14px;
+  padding:15px 16px; background:var(--white);
+  border-radius:var(--radius-sm); cursor:pointer;
+  margin-bottom:8px; border:2px solid transparent;
+  transition:border-color .15s,background .15s; user-select:none;
+}
+.item:last-child{margin-bottom:0}
+.item:active{background:var(--cream)}
+.item.checked{border-color:var(--sage2);background:#FAFDF6}
+.checkbox{
+  width:24px; height:24px; border:2px solid var(--cream3);
+  border-radius:7px; flex-shrink:0; margin-top:1px;
+  display:flex; align-items:center; justify-content:center;
+  transition:all .15s; background:var(--white);
+}
+.item.checked .checkbox{background:var(--sage);border-color:var(--sage)}
+.checkmark{width:14px;height:14px;opacity:0;transition:opacity .15s}
+.item.checked .checkmark{opacity:1}
+.checkmark::before{
+  content:'';display:block;width:14px;height:14px;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 14 14' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M2.5 7l3.5 3.5 5.5-6' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-size:contain; background-repeat:no-repeat;
+}
+.item-text{font-size:14.5px;color:var(--text);line-height:1.65;flex:1;font-weight:400}
+.item.checked .item-text{color:var(--sage3);font-weight:500}
+
+.check-footer{
+  padding:.7rem 1.2rem .9rem;
+  background:var(--white);
+  border-top:1px solid var(--cream2); flex-shrink:0;
+}
+.skip-row{text-align:center;margin-bottom:.5rem}
+.skip-btn{
+  background:none;border:1px solid var(--cream3);
+  border-radius:20px;
+  font-size:12px;color:var(--text2);
+  cursor:pointer;font-family:inherit;padding:5px 14px;
+  transition:background .12s,border-color .12s;
+}
+.skip-btn:hover{background:var(--cream);border-color:var(--cream3)}
+.btn-row{display:flex;gap:10px;align-items:stretch}
+.prev-btn{
+  padding:15px 18px;flex-shrink:0;
+  background:var(--cream2);color:var(--text2);
+  border:none;border-radius:var(--radius);
+  cursor:pointer;transition:background .12s;
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;font-weight:500;font-family:inherit;gap:6px;
+}
+.prev-btn:hover{background:var(--cream3)}
+.prev-circle{
+  width:20px;height:20px;border-radius:50%;
+  background:rgba(0,0,0,0.08);
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:700;flex-shrink:0;
+}
+.next-btn{
+  flex:1; background:var(--sage); color:#fff; border:none;
+  border-radius:var(--radius); padding:15px;
+  font-size:16px; font-weight:500; font-family:inherit;
+  cursor:pointer; transition:background .15s,transform .1s;
+  display:flex; align-items:center; justify-content:center; gap:8px;
+  letter-spacing:.02em;
+}
+.next-btn:hover{background:var(--sage3)}
+.next-btn:active{transform:scale(.98)}
+.next-arrow{
+  width:22px; height:22px;
+  background:rgba(255,255,255,0.25);
+  border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-size:14px; font-weight:700; line-height:1;
+  flex-shrink:0;
+}
+.checked-count{
+  font-size:12px;color:var(--sage);font-weight:500;
+  text-align:center;margin-top:.5rem;height:18px;
+}
+
+/* ── 결과 페이지 ── */
+#page-result{
+  display:flex;flex-direction:column;
+}
+.result-wrap{
+  flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;
+  padding:1.6rem 1.4rem 1.5rem;
+}
+.result-wrap::-webkit-scrollbar{display:none}
+.result-fixed-footer{
+  flex-shrink:0;
+  background:var(--white);
+  border-top:1px solid var(--cream2);
+  padding:.8rem 1.4rem .9rem;
+}
+.result-footer-text{
+  font-size:11px;color:var(--text3);line-height:1.7;
+  text-align:center;margin-bottom:.7rem;
+}
+.footer-icons{
+  display:flex;justify-content:center;gap:16px;margin-bottom:.6rem;
+}
+.footer-icon-btn{
+  display:flex;align-items:center;gap:6px;
+  color:var(--sage3);text-decoration:none;
+  font-size:12px;font-weight:500;
+  padding:7px 14px;border-radius:20px;
+  background:var(--cream);
+  transition:background .12s;
+}
+.footer-icon-btn:hover{background:var(--cream2)}
+.footer-icon-btn svg{flex-shrink:0}
+.footer-copy{
+  font-size:10px;color:var(--text3);
+  text-align:center;line-height:1.6;
+}
+.result-top{text-align:center;margin-bottom:1.6rem}
+.result-badge{
+  display:inline-block;background:var(--sage);color:#fff;
+  font-size:11px;font-weight:500;padding:4px 14px;
+  border-radius:20px;margin-bottom:1rem;letter-spacing:.06em;
+}
+.result-main-title{
+  font-family:'Noto Serif KR',serif;
+  font-size:20px;font-weight:600;color:var(--text);
+  line-height:1.5;margin-bottom:.4rem;
+}
+.result-score-text{font-size:13px;color:var(--text3)}
+.result-card{
+  background:var(--white);border-radius:var(--radius);
+  padding:1.4rem;margin-bottom:1rem;border-left:4px solid var(--sage);
+}
+.result-card-title{
+  font-size:15px;font-weight:500;color:var(--text);
+  margin-bottom:.6rem;line-height:1.5;
+}
+.result-card-desc{font-size:13px;color:var(--text2);line-height:1.8}
+.age-context{
+  font-size:12px;color:var(--text2);line-height:1.75;
+  margin-top:.8rem;padding-top:.8rem;
+  border-top:1px solid var(--cream2);
+}
+.result-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:.8rem}
+.result-tag{font-size:11px;font-weight:500;padding:4px 10px;border-radius:20px}
+.criteria-card{
+  background:var(--white);border-radius:var(--radius);
+  overflow:hidden;margin-bottom:1rem;
+}
+.card-header{
+  padding:11px 16px;font-size:12px;font-weight:500;
+  color:var(--text2);background:var(--cream);
+  border-bottom:1px solid var(--cream2);
+}
+.cr-row{
+  display:flex;align-items:center;padding:11px 16px;
+  gap:10px;border-bottom:1px solid var(--cream);
+}
+.cr-row:last-child{border-bottom:none}
+.cr-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.cr-label{font-size:13px;color:var(--text);flex:1}
+.cr-range{font-size:12px;color:var(--text3)}
+.cr-row.active{background:var(--cream)}
+.cr-row.active .cr-label{font-weight:500}
+.action-card{
+  background:var(--white);border-radius:var(--radius);
+  overflow:hidden;margin-bottom:1rem;
+}
+.action-item{
+  display:flex;gap:12px;padding:13px 16px;
+  border-bottom:1px solid var(--cream);align-items:flex-start;
+}
+.action-item:last-child{border-bottom:none}
+.action-num{
+  width:22px;height:22px;border-radius:50%;font-size:11px;font-weight:500;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;margin-top:1px;background:var(--cream2);color:var(--text2);
+}
+.action-t{font-size:13px;font-weight:500;color:var(--text);margin-bottom:3px}
+.action-d{font-size:12px;color:var(--text2);line-height:1.7}
+.retry-btn{
+  width:100%;background:var(--cream2);color:var(--text2);
+  border:none;border-radius:var(--radius);padding:13px;
+  font-size:13px;cursor:pointer;font-family:inherit;
+  transition:background .12s;margin-top:1rem;display:block;
+}
+.retry-btn:hover{background:var(--cream3)}
+.contact-card{
+  background:var(--white);border-radius:var(--radius);
+  overflow:hidden;margin-bottom:1rem;
+}
+.contact-item{
+  display:flex;align-items:center;gap:12px;
+  padding:14px 16px;border-bottom:1px solid var(--cream);
+  text-decoration:none;transition:background .12s;
+}
+.contact-item:last-child{border-bottom:none}
+.contact-item:hover{background:var(--cream)}
+.contact-icon{font-size:20px;flex-shrink:0}
+.contact-body{flex:1}
+.contact-title{font-size:13px;font-weight:500;color:var(--text);margin-bottom:2px}
+.contact-desc{font-size:12px;color:var(--text3)}
+.contact-arrow{font-size:16px;color:var(--text3);flex-shrink:0}
+.footer-nav{
+  display:flex;gap:8px;padding:.8rem 1.2rem;
+  background:var(--white);border-top:1px solid var(--cream2);
+  flex-shrink:0;
+}
+.prev-btn{
+  flex:1;background:var(--cream2);color:var(--text2);
+  border:none;border-radius:var(--radius);padding:13px;
+  font-size:14px;font-weight:500;font-family:inherit;
+  cursor:pointer;transition:background .12s;
+  display:flex;align-items:center;justify-content:center;gap:6px;
+}
+.prev-btn:hover{background:var(--cream3)}
+.prev-icon{
+  width:20px;height:20px;border-radius:50%;
+  background:rgba(0,0,0,0.08);
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:700;
+}
+.testkit-card{
+  background:var(--white);
+  border-radius:var(--radius);
+  border:1.5px solid var(--sage2);
+  padding:1.2rem 1.25rem;
+  margin-bottom:1rem;
+}
+.testkit-header{
+  display:flex;align-items:flex-start;gap:10px;margin-bottom:.8rem;
+}
+.testkit-icon{font-size:22px;flex-shrink:0;margin-top:1px}
+.testkit-title{
+  font-size:14px;font-weight:500;color:var(--text);margin-bottom:2px;
+}
+.testkit-sub{font-size:12px;color:var(--text3)}
+.testkit-body{
+  font-size:12.5px;color:var(--text2);line-height:1.75;
+  margin-bottom:1rem;
+}
+.testkit-btn{
+  display:block;width:100%;
+  background:var(--sage);color:#fff;
+  border-radius:var(--radius-sm);
+  padding:12px;text-align:center;
+  font-size:13px;font-weight:500;
+  text-decoration:none;
+  transition:background .15s;
+  margin-bottom:.7rem;
+}
+.testkit-btn:hover{background:var(--sage3)}
+.testkit-notice{
+  font-size:11px;color:var(--text3);
+  line-height:1.6;text-align:center;
+}
+.result-footer{
+  text-align:center;font-size:11px;color:var(--text3);
+  line-height:2;margin-top:1.5rem;padding-top:1rem;
+  border-top:1px solid var(--cream2);
+}
+
+@keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.18)}100%{transform:scale(1)}}
+.item.just-checked .checkbox{animation:pop .2s ease}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+
+  <!-- 시작 페이지 -->
+  <div class="page active" id="page-intro">
+    <div class="intro-badge">안착 by 말리™</div>
+    <div class="intro-title">나는 지금<br><span>갱년기</span>일까?</div>
+    <div class="intro-desc">최근 3~6개월 사이, 나의 몸이<br>예전과 달라진 게 있나요?<br>8가지 영역을 함께 살펴볼게요.</div>
+    <div class="intro-notice">
+      <strong>안내</strong>
+      <div class="notice-items">
+        <div class="notice-item"><span class="notice-mark">✓</span>이 체크리스트는 의학적 진단 도구가 아닙니다.</div>
+        <div class="notice-item"><span class="notice-mark">✓</span>자신의 몸 변화를 인식하는 자기 이해 도구입니다.</div>
+        <div class="notice-item"><span class="notice-mark">✓</span>해당하는 항목은 여러 개를 동시에 체크하셔도 됩니다.</div>
+      </div>
+    </div>
+    <div class="intro-sections">
+      <span class="intro-sec-tag">🌸 생리 패턴</span>
+      <span class="intro-sec-tag">🌡 열감·발한</span>
+      <span class="intro-sec-tag">💤 수면·에너지</span>
+      <span class="intro-sec-tag">💛 정서·심리</span>
+      <span class="intro-sec-tag">🧠 인지·집중</span>
+      <span class="intro-sec-tag">🦴 체형·신체</span>
+      <span class="intro-sec-tag">✨ 피부·모발</span>
+      <span class="intro-sec-tag">💧 비뇨생식기</span>
+    </div>
+    <button class="start-btn" id="start-btn" onclick="navigate('s1','forward')">체크 시작하기</button>
+  </div>
+
+  <!-- 결과 페이지 (JS로 채워짐) -->
+  <div class="page" id="page-result">
+    <div class="result-wrap">
+      <div class="result-top">
+        <div class="result-badge">체크 완료</div>
+        <div class="result-main-title" id="r-main-title"></div>
+        <div class="result-score-text" id="r-score"></div>
+      </div>
+      <div class="result-card" id="r-card">
+        <div class="result-card-title" id="r-card-title"></div>
+        <div class="result-card-desc" id="r-card-desc"></div>
+        <div class="result-tags" id="r-tags"></div>
+      </div>
+      <div class="criteria-card">
+        <div class="card-header">단계별 기준</div>
+        <div class="cr-row" id="cr-0"><div class="cr-dot" style="background:#1D9E75"></div><div class="cr-label">신호가 아직 적어요</div><div class="cr-range">0~2개</div></div>
+        <div class="cr-row" id="cr-1"><div class="cr-dot" style="background:#185FA5"></div><div class="cr-label">갱년기 초입 가능성</div><div class="cr-range">3~6개</div></div>
+        <div class="cr-row" id="cr-2"><div class="cr-dot" style="background:#BA7517"></div><div class="cr-label">갱년기 진행 가능성</div><div class="cr-range">7~13개</div></div>
+        <div class="cr-row" id="cr-3"><div class="cr-dot" style="background:#993C1D"></div><div class="cr-label">전환기 한가운데 가능성</div><div class="cr-range">14개 이상</div></div>
+      </div>
+      <div class="action-card">
+        <div class="card-header">지금 할 수 있는 것들</div>
+        <div id="action-list"></div>
+      </div>
+      <div class="testkit-card">
+        <div class="testkit-header">
+          <span class="testkit-icon">🌿</span>
+          <div>
+            <div class="testkit-title">체크 항목이 많다면, 한 번쯤 확인해보세요</div>
+            <div class="testkit-sub">병원 가기 전, 집에서 먼저 가늠해볼 수 있어요</div>
+          </div>
+        </div>
+        <div class="testkit-body">
+          갱년기 테스트기는 임테기와 같은 방식으로, FSH 호르몬 변화를 양성·음성으로 확인합니다. 정확한 수치는 아니지만 "지금 내 몸이 변하고 있구나"를 처음 인식하는 데 도움이 됩니다.<br><br>
+          말리언니가 직접 써보고 소개하는 제품이에요.
+        </div>
+        <a class="testkit-btn" href="https://link.coupang.com/a/cpHEHf" target="_blank" rel="noopener">
+          병원 가기 전, 갱년기 테스트기로 먼저 확인해보기 →
+        </a>
+        <div class="testkit-notice">정확한 진단은 산부인과 혈액검사(FSH·E2)로 확인하세요.<br>이 링크는 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.</div>
+      </div>
+      <button class="retry-btn" onclick="navigate('intro','back')">← 처음부터 다시 하기</button>
+    </div>
+
+    <!-- 고정 하단 푸터 -->
+    <div class="result-fixed-footer">
+      <div class="result-footer-text">
+        이 자료는 자기 인식을 위한 참고 도구입니다 · 갱년기 웰라이프 코칭 자료 · 안착 by 말리™<br>
+        증상이 의심될 경우 산부인과 혈액검사(FSH, E2)로 확인하세요
+      </div>
+      <div class="footer-icons">
+        <a class="footer-icon-btn" href="https://www.instagram.com/mali_unni/#" target="_blank" rel="noopener" title="인스타그램">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="2" y="2" width="20" height="20" rx="5.5" stroke="currentColor" stroke-width="1.8"/>
+            <circle cx="12" cy="12" r="4.5" stroke="currentColor" stroke-width="1.8"/>
+            <circle cx="17.5" cy="6.5" r="1" fill="currentColor"/>
+          </svg>
+          <span>@mali_unni</span>
+        </a>
+        <a class="footer-icon-btn" href="http://pf.kakao.com/_cxaSen" target="_blank" rel="noopener" title="카카오 채널">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="12" cy="11" rx="10" ry="8" fill="currentColor" opacity="0.15"/>
+            <ellipse cx="12" cy="11" rx="10" ry="8" stroke="currentColor" stroke-width="1.8"/>
+            <path d="M7 11c0-1.1.9-2 2-2h6a2 2 0 010 4H9a2 2 0 01-2-2z" fill="currentColor" opacity="0.5"/>
+            <path d="M10 16l1.5-3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+          </svg>
+          <span>강의 · 협업 문의</span>
+        </a>
+      </div>
+      <div class="footer-copy">© 말리언니 · 본 체크리스트의 저작권은 말리언니에게 있습니다.<br>무단 복제 · 배포 · 재가공을 금합니다.</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ── 데이터 ──
+const sections = [
+  { id:'s1', icon:'🌸', name:'생리 패턴 변화', items:[
+    '생리 주기가 예전보다 2~3일 짧아졌다 (예: 30일 → 26~27일)',
+    '배란 즈음 가슴 통증이나 부기가 이전보다 심해졌다',
+    '생리 전 PMS 증상(짜증·부종·식욕증가)이 예전보다 심해졌다',
+    '생리 주기 차이가 7일 이상 벌어지는 달이 생겼다',
+    '생리량이 눈에 띄게 줄거나 갑자기 많아진 적 있다',
+    '생리가 2~3개월 불규칙하거나 건너뛴 적 있다',
+    '마지막 생리로부터 6개월 이상 지났다',
+  ]},
+  { id:'s2', icon:'🌡', name:'열감 · 발한', items:[
+    '가끔 이유 없이 얼굴이 붉어지거나 열이 확 오르는 느낌이 든다',
+    '자다가 이불을 걷어차거나, 밤에 더위를 갑자기 타게 됐다',
+    '안면홍조가 하루에 한두 번 규칙적으로 나타나기 시작했다',
+    '밤에 땀에 젖어 잠에서 깬 적이 있다',
+    '홍조가 한 번 오면 5분 이상 지속되고, 하루에도 여러 번 반복되어 외출이나 대화가 꺼려진 적이 있다',
+  ]},
+  { id:'s3', icon:'💤', name:'수면 · 에너지', items:[
+    '예전보다 잠이 얕아진 것 같고, 작은 소리에도 깨는 편이 됐다',
+    '잠드는 데 30분 이상 걸리는 날이 늘었다',
+    '새벽 3~5시에 깨서 다시 잠들기 힘든 각성 상태가 된다',
+    '오후에 갑자기 피곤하고 무기력한 시간이 생겼다',
+    '충분히 잔 것 같아도 피로가 풀리지 않는다',
+  ]},
+  { id:'s4', icon:'💛', name:'정서 · 심리', items:[
+    '생리 전이 아닌데도 이유 없이 짜증이 나거나 예민해지는 날이 늘었다',
+    '감정 기복이 심해지거나, 사소한 일에 눈물이 날 것 같다',
+    '이유 없이 불안하거나 초조한 느낌이 자주 든다',
+    '의욕이 뚝 떨어지거나 무기력한 시기가 반복된다',
+    '우울한 기분이 2주 이상 지속된 적 있다',
+  ]},
+  { id:'s5', icon:'🧠', name:'인지 · 집중력', items:[
+    '말하다가 단어가 순간 생각 안 나는 일이 예전보다 잦아졌다',
+    '읽은 내용이 금방 머릿속에서 사라지는 느낌이 든다',
+    '집중이 어렵고, 하던 일의 실수가 전보다 늘었다',
+    '약속이나 방금 한 일을 깜빡하는 일이 잦아졌다',
+    '머릿속이 흐릿하고 생각이 잘 정리되지 않는 날이 생겼다',
+  ]},
+  { id:'s6', icon:'🦴', name:'체형 · 신체 변화', items:[
+    '식단·운동이 달라지지 않았는데 복부·허리 위주로 살이 붙거나 체중이 늘었다',
+    '몸이 쉽게 붓고, 부기가 잘 빠지지 않는다',
+    '같은 운동을 해도 근력이 예전보다 확실히 줄었다',
+    '예전보다 쉽게 피로해지고, 체력이 전반적으로 떨어진 것 같다',
+    '아침에 일어나면 손가락·무릎·어깨 등 여러 관절이 뻣뻣하고 풀리는 데 시간이 걸린다',
+    '몸의 유연성이 예전보다 떨어지고, 스트레칭을 해도 잘 풀리지 않는다',
+  ]},
+  { id:'s7', icon:'✨', name:'피부 · 모발 · 손발톱', items:[
+    '피부가 예전보다 건조해지고 탄력이 줄어드는 것 같다',
+    '예전에 없던 피부 가려움이 생겼다 (특히 밤에)',
+    '입이 자주 건조하거나 입마름이 심해졌다',
+    '머리카락이 가늘어지거나 빠지는 양이 눈에 띄게 늘었다',
+    '눈썹이나 속눈썹도 가늘어지는 것 같다',
+    '손발톱이 약해지거나 잘 부러진다',
+  ]},
+  { id:'s8', icon:'💧', name:'비뇨생식기', items:[
+    '평소에도 외음부나 질 주변이 건조하거나 가렵고 불편한 느낌이 든다',
+    '성관계 시 건조하거나 통증·불편감이 생겼다',
+    '성욕이 예전보다 줄었거나 성관계에 대한 흥미가 전과 다르다',
+    '소변이 급하거나, 기침·재채기 시 소변이 새는 경우가 생겼다',
+    '소변을 볼 때 따갑거나 화끈거리는 느낌이 생겼다',
+    '소변을 자주 보게 되거나, 본 후에도 시원하지 않은 느낌이 든다',
+  ]},
+
+];
+
+const TOTAL_ITEMS = sections.reduce((s,sec)=>s+sec.items.length,0);
+let selectedAge = ''; // 'early' | 'mid' | 'late'
+
+function selectAge(btn, age) {
+  document.querySelectorAll('.age-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  selectedAge = age;
+  document.getElementById('start-btn').disabled = false;
+  document.getElementById('start-btn').style.background = '';
+}
+
+const stages = [
+  { min:0,max:2,col:'#1D9E75',bg:'#E8F5EE',
+    title:'현재는 뚜렷한 갱년기 신호가 적어요',
+    desc:'지금 당장의 변화는 적지만, 40대 전후라면 몸의 신호에 귀 기울이기 시작할 때입니다. 이 시기에 좋은 생활습관을 만들어두면 전환기를 훨씬 건강하게 통과할 수 있습니다.',
+    tags:['예방 관리 단계','생활습관 점검'],
+    actions:[
+      {t:'생리 주기 기록 시작하기',d:'앱을 활용해 주기, 양, 기분 변화를 기록해 두세요. 나중에 변화를 파악하는 중요한 기준이 됩니다.'},
+      {t:'규칙적인 유산소 운동',d:'주 3회 이상, 30분 걷기·수영 등 유산소 운동이 호르몬 균형 유지에 도움이 됩니다.'},
+      {t:'콩류·통곡물 위주 식단',d:'두부·두유·아마씨 등 피토에스트로겐이 풍부한 식품과 칼슘·비타민D를 꾸준히 챙기세요.'},
+      {t:'스트레스 관리 습관',d:'명상, 호흡법, 취미 활동 등으로 일상의 긴장을 낮추는 루틴을 만들어 두세요.'},
+    ]},
+  { min:3,max:6,col:'#185FA5',bg:'#E6F1FB',
+    title:'갱년기 초입 — 미묘한 변화가 시작됐어요',
+    desc:"아직 강한 증상은 아니지만 '예전과 조금 다르다'는 신호들이 감지됩니다. 이 시기에 인식하는 것이 가장 좋습니다. 변화의 패턴을 관찰하고 준비를 시작해 보세요.",
+    tags:['초기 신호 감지','기록 시작 권장'],
+    actions:[
+      {t:'증상 일지 기록 시작',d:'주기, 기분, 수면 변화를 메모해 두세요. 3개월 후 변화 패턴을 보면 내 몸의 흐름이 보입니다.'},
+      {t:'수면 환경 점검',d:'취침 1시간 전 스마트폰을 멀리하고, 침실 온도를 18~20°C로 유지해 보세요.'},
+      {t:'칼슘·비타민D 보충 시작',d:'칼슘 700~1000mg, 비타민D 800~1000IU를 꾸준히 섭취하면 골밀도 유지에 도움이 됩니다.'},
+      {t:'1년에 한 번 부인과 정기검진',d:'초음파·혈압·혈당 확인과 함께 필요시 FSH, E2 호르몬 수치를 체크해 보세요.'},
+    ]},
+  { min:7,max:13,col:'#BA7517',bg:'#FDF3E3',
+    title:'갱년기 진행 중일 가능성이 높아요',
+    desc:'여러 영역에서 변화가 함께 나타나고 있습니다. 이상한 것이 아닙니다. 자연스러운 호르몬 전환의 신호입니다. 전문적인 확인과 생활습관 관리를 함께 시작하세요.',
+    tags:['전문의 상담 권장','호르몬 검사 고려'],
+    actions:[
+      {t:'산부인과 혈액검사 (FSH, E2)',d:'FSH 수치가 10 이상이면 난소 기능 저하 신호일 수 있습니다. 현재 호르몬 상태를 확인해 보세요.'},
+      {t:'골밀도 검사 (DEXA)',d:'에스트로겐 감소가 시작되면 골밀도가 빠르게 낮아질 수 있습니다. 기준치를 파악해 두세요.'},
+      {t:'수면의 질 집중 관리',d:'야간발한이 있다면 침실 온도를 낮추고, 수면 전 과식·알코올을 피하세요.'},
+      {t:'근력 운동 추가',d:'복부 지방 증가를 막으려면 주 2회 이상 근력 운동을 추가하세요.'},
+      {t:'호르몬 치료 옵션 상담',d:'증상이 일상에 영향을 준다면 산부인과에서 HRT 또는 비호르몬 치료 옵션을 상담해 보세요.'},
+    ]},
+  { min:14,max:999,col:'#993C1D',bg:'#FDF0EC',
+    title:'갱년기 전환기 한가운데에 있을 가능성이 높아요',
+    desc:'다양한 영역에서 복합적인 변화가 나타나고 있습니다. 혼자 감당하려 하지 마세요. 전문적인 도움과 함께 이 전환기를 통과하는 것이 이후 건강한 삶의 기반이 됩니다.',
+    tags:['적극적 관리 필요','의료+라이프스타일 병행'],
+    actions:[
+      {t:'산부인과 전문의 상담 (최우선)',d:'FSH, E2, 갑상선 호르몬 혈액검사와 함께 현재 증상에 맞는 치료 옵션을 상담하세요.'},
+      {t:'골밀도·심혈관 검사',d:'DEXA 검사와 콜레스테롤·혈압 확인. 폐경 전후 골밀도는 연간 최대 3~5% 감소할 수 있습니다.'},
+      {t:'수면·열감 즉각 관리',d:'야간발한에는 냉각 소재 침구, 침실 온도 16~18°C 유지가 도움이 됩니다.'},
+      {t:'정서 지원 찾기',d:'같은 경험을 나누는 커뮤니티나 갱년기 코칭 프로그램에 참여해 심리적 안정감을 높이세요.'},
+      {t:'근력 운동 + 단백질 식단',d:'주 2~3회 근력 운동과 함께 단백질을 체중 1kg당 1~1.2g 섭취하는 것을 목표로 하세요.'},
+    ]},
+];
+
+// 체크 상태
+let checks = {};
+sections.forEach(sec => { checks[sec.id] = new Array(sec.items.length).fill(false); });
+
+// 페이지 순서: intro > s1 > s2 > ... > s7 > result
+const PAGE_ORDER = ['intro', ...sections.map(s=>s.id), 'result'];
+
+// ── 페이지 전환 (핵심 수정) ──
+let isAnimating = false;
+
+function navigate(targetId, direction) {
+  if(isAnimating) return;
+  const current = document.querySelector('.page.active');
+  const target  = document.getElementById('page-' + targetId);
+  if(!target || current === target) return;
+
+  isAnimating = true;
+
+  // 결과 페이지로 갈 때 데이터 채우기
+  if(targetId === 'result') fillResult();
+
+  // 결과 페이지 스크롤 초기화
+  if(targetId === 'result') target.scrollTop = 0;
+  const scroll = target.querySelector('.items-scroll');
+  if(scroll) scroll.scrollTop = 0;
+
+  // 현재 페이지 퇴장
+  const outClass = direction === 'forward' ? 'anim-out-left' : 'anim-out-right';
+  current.classList.add(outClass);
+
+  // 타겟 페이지 등장
+  const inClass = direction === 'forward' ? 'anim-in-right' : 'anim-in-left';
+  target.classList.add(inClass);
+  target.classList.add('active');
+
+  setTimeout(() => {
+    current.classList.remove('active', outClass);
+    target.classList.remove(inClass);
+    isAnimating = false;
+  }, 320);
+}
+
+// ── 섹션 페이지 생성 ──
+function buildSectionPages() {
+  const app = document.getElementById('app');
+  const resultPage = document.getElementById('page-result');
+
+  sections.forEach((sec, si) => {
+    const div = document.createElement('div');
+    div.className = 'page';
+    div.id = 'page-' + sec.id;
+
+    const isLast = si === sections.length - 1;
+    const prevId = si === 0 ? 'intro' : sections[si-1].id;
+    const nextId = isLast ? 'result' : sections[si+1].id;
+    const pct    = Math.round((si+1) / sections.length * 100);
+
+    div.innerHTML = `
+      <div class="check-header">
+        <div class="nav-row">
+          <button class="back-btn" onclick="navigate('${prevId}','back')">‹</button>
+          <div class="nav-title">${sec.icon} ${sec.name}</div>
+          <div class="nav-count">${si+1}/${sections.length}</div>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" style="width:${pct}%"></div>
+        </div>
+      </div>
+      <div class="items-scroll">
+        <div class="sec-guide-box">
+          <div class="sec-period-inline">최근 3~6개월 사이, 나의 몸이 예전과 달라진 게 있나요?</div>
+          <div class="sec-guide-inline">해당하는 항목을 모두 체크하세요 · 없으면 바로 다음으로</div>
+        </div>
+        ${sec.items.map((item, ii) => `
+          <div class="item" id="item-${sec.id}-${ii}" onclick="toggleItem('${sec.id}',${ii})">
+            <div class="checkbox"><div class="checkmark"></div></div>
+            <div class="item-text">${item}</div>
+          </div>
+        `).join('')}
+      </div>
+      <div class="check-footer">
+        <div class="skip-row">
+          <button class="skip-btn" onclick="skipSection('${sec.id}','${nextId}')">해당 없음 — 건너뛰기</button>
+        </div>
+        <div class="btn-row">
+          <button class="prev-btn" onclick="navigate('${prevId}','back')">
+            <span class="prev-circle">←</span> 이전
+          </button>
+          <button class="next-btn" onclick="navigate('${nextId}','forward')">
+            ${isLast ? '결과 보기' : '다음'} <span class="next-arrow">→</span>
+          </button>
+        </div>
+        <div class="checked-count" id="cc-${sec.id}"></div>
+      </div>
+    `;
+    app.insertBefore(div, resultPage);
+  });
+}
+
+function toggleItem(secId, idx) {
+  checks[secId][idx] = !checks[secId][idx];
+  const el = document.getElementById(`item-${secId}-${idx}`);
+  el.classList.toggle('checked', checks[secId][idx]);
+  el.classList.add('just-checked');
+  setTimeout(() => el.classList.remove('just-checked'), 250);
+  const cnt = checks[secId].filter(Boolean).length;
+  const cc = document.getElementById(`cc-${secId}`);
+  if(cc) cc.textContent = cnt > 0 ? `${cnt}개 선택됨` : '';
+}
+
+function skipSection(secId, nextId) {
+  // 해당 섹션 초기화
+  checks[secId] = new Array(sections.find(s=>s.id===secId).items.length).fill(false);
+  sections.find(s=>s.id===secId).items.forEach((_,ii) => {
+    const el = document.getElementById(`item-${secId}-${ii}`);
+    if(el) el.classList.remove('checked');
+  });
+  const cc = document.getElementById(`cc-${secId}`);
+  if(cc) cc.textContent = '';
+  navigate(nextId, 'forward');
+}
+
+function fillResult() {
+  let total = 0;
+  Object.values(checks).forEach(arr => arr.forEach(v => { if(v) total++; }));
+
+  const si = total<=2?0:total<=6?1:total<=13?2:3;
+  const s  = stages[si];
+
+  // 체크 수 기반 맥락 문장
+  const contexts = [
+    '지금 당장 뚜렷한 신호는 적지만, 몸이 보내는 작은 변화에 귀 기울이기 시작할 때입니다. 나이와 상관없이 미리 준비하는 것이 가장 현명합니다.',
+    '이 증상들은 갱년기 외에도 만성 스트레스, 수면 부족, 영양 불균형으로 나타날 수 있습니다. 체크 수가 많다고 해서 반드시 갱년기는 아니지만, 몸이 보내는 신호임은 분명합니다. 생활습관부터 점검해보세요.',
+    '여러 영역에서 변화가 동시에 나타나고 있다면, 나이와 상관없이 호르몬 변화를 의심해볼 수 있습니다. 갱년기는 40대 초반부터 시작될 수 있으며, 생리가 규칙적이어도 이미 진행 중인 경우가 많습니다.',
+    '다양한 영역에서 복합적인 변화가 나타나고 있습니다. 이것은 이상한 것이 아닙니다. 갱년기는 생리 중단보다 훨씬 앞서 시작되는 경우가 많습니다. 지금 느끼는 변화들을 가볍게 보지 말고 전문적인 확인을 받아보세요.',
+  ];
+
+  document.getElementById('r-main-title').textContent = s.title;
+  document.getElementById('r-score').textContent = `총 ${TOTAL_ITEMS}개 항목 중 ${total}개 해당`;
+
+  const card = document.getElementById('r-card');
+  card.style.borderLeftColor = s.col;
+  card.style.background = s.bg;
+  document.getElementById('r-card-title').textContent = s.title;
+  document.getElementById('r-card-title').style.color = s.col;
+  document.getElementById('r-card-desc').textContent = s.desc;
+
+  // 맥락 문장
+  let ctxEl = document.getElementById('r-age-context');
+  if(!ctxEl) {
+    ctxEl = document.createElement('div');
+    ctxEl.id = 'r-age-context';
+    ctxEl.className = 'age-context';
+    document.getElementById('r-card-desc').after(ctxEl);
+  }
+  ctxEl.textContent = contexts[si];
+
+  document.getElementById('r-tags').innerHTML = s.tags.map(t =>
+    `<span class="result-tag" style="background:${s.col}22;color:${s.col}">${t}</span>`
+  ).join('');
+
+  for(let i=0; i<4; i++)
+    document.getElementById('cr-'+i).classList.toggle('active', i===si);
+
+  document.getElementById('action-list').innerHTML = s.actions.map((a,i) => `
+    <div class="action-item">
+      <div class="action-num" style="background:${s.col}22;color:${s.col}">${i+1}</div>
+      <div><div class="action-t">${a.t}</div><div class="action-d">${a.d}</div></div>
+    </div>
+  `).join('');
+}
+
+// 초기화
+buildSectionPages();
+</script>
+</body>
+</html>
